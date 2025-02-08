@@ -139,10 +139,10 @@ def start():
     clicked = False
     activated_before = False
 
-    v_i = 28  # m/s
-    theta = 30  # deg
-    h_i = 100  # m
-    g = 9.8  # m/s2
+    v_i = random_float(1, 100)  # m/s
+    theta = random_float(0, 89.99)  # deg
+    h_i = random_float(0, 100)  # m
+    g = random_float(9, 10)  # m/s2
     r = 25  # pixels
     scale = 10  # no units
 
