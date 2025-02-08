@@ -35,26 +35,62 @@ def calculate(v_i, theta, h_i, g, debug=False):
 
 
 def start():
-    global position, v_i, theta, h_i, g, r, v_ix, v_iy, t, d_x, d_y, h_max, t_max
+    global position, v_i, theta, h_i, g, r, v_ix, v_iy, t, d_x, d_y, h_max, t_max, velocity, clicked, scale, positions
     window = get_window()
 
-    v_i = 8.5  # m/s
+    velocity = Vector2()
+    clicked = False
+
+    v_i = 28  # m/s
     theta = 30  # deg
     h_i = 100  # m
     g = 9.8  # m/s2
-    r = 25
+    r = 25  # pixels
+    scale = 10  # no units
 
-    position = Vector2(-window.WIDTH // 2 + r, -window.HEIGHT // 2 + r if h_i == 0 else 0)
+    position = Vector2(-window.WIDTH // 2 + r, 0 if h_i > 0 else -window.HEIGHT // 2 + r)
+    positions = []
 
     v_ix, v_iy, t, d_x, d_y, h_max, t_max = calculate(v_i, theta, h_i, g)
 
 
 def update():
-    global window
+    global window, position, velocity, clicked
     window = get_window()
     window.SURFACE.fill(WHITE.tup())
 
-    draw_circle(window.SURFACE, BLACK, position, r)
+    if input_manager.get_key_down(pygame.K_SPACE):
+        velocity = Vector2(10, 10)
+        clicked = True
+
+    if clicked:
+        velocity.y -= g * window.delta_time
+        position += velocity * scale * window.delta_time
+        positions.append(position)
+
+    if position.y <= r - window.HEIGHT // 2:
+        position.y = r - window.HEIGHT // 2
+        velocity = Vector2()
+        clicked = False
+
+    for i, point in enumerate(positions):
+        if i == 0:
+            continue
+
+        draw_line(window.SURFACE, BLACK, positions[i - 1], point, 2)
+
+    draw_circle(window.SURFACE, GREEN, position, r)
+    if h_i > 0:
+        draw_rectangle(window.SURFACE, BLACK, Vector2(-window.WIDTH // 2, -r), Vector2(2 * r, window.HEIGHT), 2)
+
+    values = Text(
+        f"Initial Velocity: {v_i}\nAngle: {theta}\nInitial Height: {h_i}\nGravitational Force: {g}\n\nTime in Air: {t}\nDistance: {d_x}\nMaximum Height Above Initial Height: {h_max}\nTime to Reach Maximum Height: {t_max}",
+        Text.arial_32,
+        Vector2(4 * window.WIDTH // 5, 4 * window.HEIGHT // 5),
+        Text.top_right,
+        BLACK,
+    )
+    values.render()
 
     set_window(window)
 
