@@ -141,8 +141,8 @@ def start():
 
     v_i = random_float(1, 100)  # m/s
     theta = random_float(0, 89.99)  # deg
-    h_i = random_float(0, 100)  # m
-    g = random_float(9, 10)  # m/s2
+    h_i = random_float(0, 100) * random.randint(0, 1)  # m
+    g = 9.81  # m/s2
     r = 25  # pixels
     scale = 10  # no units
 
